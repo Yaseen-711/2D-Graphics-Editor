@@ -29,7 +29,6 @@ void display_canvas();
 
 int main() {
     int choice;
-
     printf("--- CLI Paint Engine ---\n");
     while (1) {
         printf("\n*** MAIN MENU ***\n");
@@ -79,11 +78,9 @@ void add_shape() {
         printf("Error: Shape database is full.\n");
         return;
     }
-
     Shape s;
     s.id = next_id++;
     int type_input;
-
     printf("\nSelect Shape Type:\n");
     printf("0: Line, 1: Rectangle, 2: Circle, 3: Triangle, 4: Text\nChoice: ");
     if (scanf("%d", &type_input) != 1 || type_input < 0 || type_input > 4) {
@@ -92,7 +89,6 @@ void add_shape() {
         return;
     }
     s.type = (ShapeType)type_input;
-
     printf("Enter drawing character (e.g., *, #): ");
     scanf(" %c", &s.draw_char);
 
@@ -129,6 +125,20 @@ void modify_shape() {
 
 void display_canvas() {
     printf("\n--- Database Output (Canvas Visuals Disabled) ---\n");
-    
+    if (shape_count == 0) {
+        printf("No shapes currently active.\n");
+        return;
+    }  
+    for (int i = 0; i < shape_count; i++) {
+        Shape s = shape_db[i];
+        printf("ID: %2d | Type: %d | Char: '%c' | ", s.id, s.type, s.draw_char);
+        
+        switch (s.type) {
+            case LINE: printf("Coords: (%d,%d) to (%d,%d)\n", s.data.line.x1, s.data.line.y1, s.data.line.x2, s.data.line.y2); break;
+            case RECTANGLE: printf("X:%d, Y:%d, W:%d, H:%d\n", s.data.rect.x, s.data.rect.y, s.data.rect.w, s.data.rect.h); break;
+            case CIRCLE: printf("Center:(%d,%d), R:%d\n", s.data.circle.cx, s.data.circle.cy, s.data.circle.r); break;
+            case TRIANGLE: printf("Pts: (%d,%d), (%d,%d), (%d,%d)\n", s.data.triangle.x1, s.data.triangle.y1, s.data.triangle.x2, s.data.triangle.y2, s.data.triangle.x3, s.data.triangle.y3); break;
+        }
+    }
     printf("-------------------------------------------------\n");
 }
