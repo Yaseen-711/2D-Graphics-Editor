@@ -2,8 +2,10 @@
 #include <stdlib.h>
 
 #define MAX_SHAPES 100
+#define CANVAS_WIDTH 60
+#define CANVAS_HEIGHT 20
 
-typedef enum { LINE, RECTANGLE, CIRCLE, TRIANGLE, TEXT } ShapeType;
+typedef enum { LINE, RECTANGLE, CIRCLE, TRIANGLE } ShapeType;
 
 typedef struct {
     ShapeType type;
@@ -14,24 +16,28 @@ typedef struct {
         struct { int x, y, w, h; } rect;
         struct { int cx, cy, r; } circle;
         struct { int x1, y1, x2, y2, x3, y3; } triangle;
-        struct { int x, y; char label[50]; } text;
     } data;
 } Shape;
 
 Shape shape_db[MAX_SHAPES];
 int shape_count = 0;
 int next_id = 1;
+char canvas[CANVAS_HEIGHT][CANVAS_WIDTH];
 
-// Function Declarations (Prototypes)
+// Function Declarations
 void add_shape();
 void delete_shape();
 void modify_shape();
 void display_canvas();
+void init_canvas();
+void plot(int x, int y, char c);
+void render_line(int x1, int y1, int x2, int y2, char c);
+void render_rectangle(int x, int y, int w, int h, char c);
 
 int main() {
     int choice;
 
-    printf("--- CLI Paint Engine Booted ---\n");
+    printf("--- CLI Paint Engine Booted (V4 - 2D Rendering) ---\n");
 
     while (1) {
         printf("\n*** MAIN MENU ***\n");
@@ -49,31 +55,68 @@ int main() {
         }
 
         switch (choice) {
-            case 1:
-                add_shape();
-                break;
-            case 2:
-                delete_shape();
-                break;
-            case 3:
-                modify_shape();
-                break;
-            case 4:
-                display_canvas();
-                break;
-            case 0:
+            case 1: add_shape(); break;
+            case 2: delete_shape(); break;
+            case 3: modify_shape(); break;
+            case 4: display_canvas(); break;
+            case 0: 
                 printf("Shutting down...\n");
                 exit(0);
             default:
                 printf("Error: Invalid option. Try again.\n");
         }
     }
-    
     return 0;
 }
 
 // ==========================================
-// Function Definitions
+// Rendering Engine Logic
+// ==========================================
+
+void init_canvas() {
+    for (int i = 0; i < CANVAS_HEIGHT; i++) {
+        for (int j = 0; j < CANVAS_WIDTH; j++) {
+            canvas[i][j] = '_';
+        }
+    }
+}
+
+// Bounds checking to prevent segmentation faults
+void plot(int x, int y, char c) {
+    if (x >= 0 && x < CANVAS_WIDTH && y >= 0 && y < CANVAS_HEIGHT) {
+        canvas[y][x] = c;
+    }
+}
+
+// Bresenham's Line Algorithm
+void render_line(int x1, int y1, int x2, int y2, char c) {
+    int dx = abs(x2 - x1), sx = x1 < x2 ? 1 : -1;
+    int dy = -abs(y2 - y1), sy = y1 < y2 ? 1 : -1; 
+    int err = dx + dy, e2;
+
+    while (1) {
+        plot(x1, y1, c);
+        if (x1 == x2 && y1 == y2) break;
+        e2 = 2 * err;
+        if (e2 >= dy) { err += dy; x1 += sx; }
+        if (e2 <= dx) { err += dx; y1 += sy; }
+    }
+}
+
+// Hollow rectangle drawing logic
+void render_rectangle(int x, int y, int w, int h, char c) {
+    for (int i = 0; i < w; i++) {
+        plot(x + i, y, c);             // Top edge
+        plot(x + i, y + h - 1, c);     // Bottom edge
+    }
+    for (int i = 0; i < h; i++) {
+        plot(x, y + i, c);             // Left edge
+        plot(x + w - 1, y + i, c);     // Right edge
+    }
+}
+
+// ==========================================
+// Database Operations
 // ==========================================
 
 void add_shape() {
@@ -87,8 +130,8 @@ void add_shape() {
     int type_input;
 
     printf("\nSelect Shape Type:\n");
-    printf("0: Line, 1: Rectangle, 2: Circle, 3: Triangle, 4: Text\nChoice: ");
-    if (scanf("%d", &type_input) != 1 || type_input < 0 || type_input > 4) {
+    printf("0: Line, 1: Rectangle, 2: Circle (Math Pending), 3: Triangle (Math Pending)\nChoice: ");
+    if (scanf("%d", &type_input) != 1 || type_input < 0 || type_input > 3) {
         while(getchar() != '\n');
         printf("Invalid shape type.\n");
         return;
@@ -114,12 +157,6 @@ void add_shape() {
         case TRIANGLE:
             printf("Enter X1 Y1 X2 Y2 X3 Y3: ");
             scanf("%d %d %d %d %d %d", &s.data.triangle.x1, &s.data.triangle.y1, &s.data.triangle.x2, &s.data.triangle.y2, &s.data.triangle.x3, &s.data.triangle.y3);
-            break;
-        case TEXT:
-            printf("Enter X, Y: ");
-            scanf("%d %d", &s.data.text.x, &s.data.text.y);
-            printf("Enter text string: ");
-            scanf(" %49[^\n]", s.data.text.label); // Reads string with spaces
             break;
     }
 
@@ -149,7 +186,6 @@ void delete_shape() {
     }
 
     if (found_index != -1) {
-        // Shift remaining elements left to close the gap
         for (int i = found_index; i < shape_count - 1; i++) {
             shape_db[i] = shape_db[i + 1];
         }
@@ -186,7 +222,6 @@ void modify_shape() {
         printf("Modifying Shape ID %d (Type: %d). Enter new drawing character: ", s->id, s->type);
         scanf(" %c", &s->draw_char);
 
-        // Re-prompt for coordinates based on existing type
         switch (s->type) {
             case LINE:
                 printf("Enter new X1 Y1 X2 Y2: ");
@@ -204,12 +239,6 @@ void modify_shape() {
                 printf("Enter new X1 Y1 X2 Y2 X3 Y3: ");
                 scanf("%d %d %d %d %d %d", &s->data.triangle.x1, &s->data.triangle.y1, &s->data.triangle.x2, &s->data.triangle.y2, &s->data.triangle.x3, &s->data.triangle.y3);
                 break;
-            case TEXT:
-                printf("Enter new X, Y: ");
-                scanf("%d %d", &s->data.text.x, &s->data.text.y);
-                printf("Enter new text string: ");
-                scanf(" %49[^\n]", s->data.text.label);
-                break;
         }
         printf("Shape ID %d updated.\n", s->id);
     } else {
@@ -218,23 +247,32 @@ void modify_shape() {
 }
 
 void display_canvas() {
-    printf("\n--- Database Output (Canvas Visuals Disabled) ---\n");
-    if (shape_count == 0) {
-        printf("No shapes currently active.\n");
-        return;
-    }
-    
+    init_canvas(); // Clear and fill with '_'
+
+    // Render all active shapes into the 2D array
     for (int i = 0; i < shape_count; i++) {
         Shape s = shape_db[i];
-        printf("ID: %2d | Type: %d | Char: '%c' | ", s.id, s.type, s.draw_char);
-        
         switch (s.type) {
-            case LINE: printf("Coords: (%d,%d) to (%d,%d)\n", s.data.line.x1, s.data.line.y1, s.data.line.x2, s.data.line.y2); break;
-            case RECTANGLE: printf("X:%d, Y:%d, W:%d, H:%d\n", s.data.rect.x, s.data.rect.y, s.data.rect.w, s.data.rect.h); break;
-            case CIRCLE: printf("Center:(%d,%d), R:%d\n", s.data.circle.cx, s.data.circle.cy, s.data.circle.r); break;
-            case TRIANGLE: printf("Pts: (%d,%d), (%d,%d), (%d,%d)\n", s.data.triangle.x1, s.data.triangle.y1, s.data.triangle.x2, s.data.triangle.y2, s.data.triangle.x3, s.data.triangle.y3); break;
-            case TEXT: printf("Pos:(%d,%d), Text: \"%s\"\n", s.data.text.x, s.data.text.y, s.data.text.label); break;
+            case LINE:
+                render_line(s.data.line.x1, s.data.line.y1, s.data.line.x2, s.data.line.y2, s.draw_char);
+                break;
+            case RECTANGLE:
+                render_rectangle(s.data.rect.x, s.data.rect.y, s.data.rect.w, s.data.rect.h, s.draw_char);
+                break;
+            case CIRCLE:
+            case TRIANGLE:
+                // Pending logic for next version
+                break;
         }
+    }
+
+    // Print the physical canvas
+    printf("\n--- Canvas Render (%dx%d) ---\n", CANVAS_WIDTH, CANVAS_HEIGHT);
+    for (int y = 0; y < CANVAS_HEIGHT; y++) {
+        for (int x = 0; x < CANVAS_WIDTH; x++) {
+            putchar(canvas[y][x]);
+        }
+        putchar('\n');
     }
     printf("-------------------------------------------------\n");
 }
