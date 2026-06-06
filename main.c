@@ -34,6 +34,7 @@ void plot(int x, int y, char c);
 void render_line(int x1, int y1, int x2, int y2, char c);
 void render_rectangle(int x, int y, int w, int h, char c);
 void render_triangle(int x1, int y1, int x2, int y2, int x3, int y3, char c);
+void render_circle(int cx, int cy, int r, char c);
 
 int main() {
     int choice;
@@ -123,6 +124,33 @@ void render_triangle(int x1, int y1, int x2, int y2, int x3, int y3, char c) {
     render_line(x3, y3, x1, y1, c);
 }
 
+// Midpoint Circle Algorithm
+void render_circle(int cx, int cy, int r, char c) {
+    int x = r;
+    int y = 0;
+    int err = 0;
+
+    while (x >= y) {
+        plot(cx + x, cy + y, c);
+        plot(cx + y, cy + x, c);
+        plot(cx - y, cy + x, c);
+        plot(cx - x, cy + y, c);
+        plot(cx - x, cy - y, c);
+        plot(cx - y, cy - x, c);
+        plot(cx + y, cy - x, c);
+        plot(cx + x, cy - y, c);
+
+        if (err <= 0) {
+            y += 1;
+            err += 2 * y + 1;
+        }
+        if (err > 0) {
+            x -= 1;
+            err -= 2 * x + 1;
+        }
+    }
+}
+
 // ==========================================
 // Database Operations
 // ==========================================
@@ -138,7 +166,7 @@ void add_shape() {
     int type_input;
 
     printf("\nSelect Shape Type:\n");
-    printf("0: Line, 1: Rectangle, 2: Circle (Math Pending), 3: Triangle\nChoice: ");
+    printf("0: Line, 1: Rectangle, 2: Circle, 3: Triangle\nChoice: ");
     if (scanf("%d", &type_input) != 1 || type_input < 0 || type_input > 3) {
         while(getchar() != '\n');
         printf("Invalid shape type.\n");
@@ -271,7 +299,7 @@ void display_canvas() {
                 render_triangle(s.data.triangle.x1, s.data.triangle.y1, s.data.triangle.x2, s.data.triangle.y2, s.data.triangle.x3, s.data.triangle.y3, s.draw_char);
                 break;
             case CIRCLE:
-                // Pending logic for next version
+                render_circle(s.data.circle.cx, s.data.circle.cy, s.data.circle.r, s.draw_char);
                 break;
         }
     }
