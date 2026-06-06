@@ -33,6 +33,7 @@ void init_canvas();
 void plot(int x, int y, char c);
 void render_line(int x1, int y1, int x2, int y2, char c);
 void render_rectangle(int x, int y, int w, int h, char c);
+void render_triangle(int x1, int y1, int x2, int y2, int x3, int y3, char c);
 
 int main() {
     int choice;
@@ -115,6 +116,13 @@ void render_rectangle(int x, int y, int w, int h, char c) {
     }
 }
 
+// Triangle drawing logic (connecting 3 vertices with lines)
+void render_triangle(int x1, int y1, int x2, int y2, int x3, int y3, char c) {
+    render_line(x1, y1, x2, y2, c);
+    render_line(x2, y2, x3, y3, c);
+    render_line(x3, y3, x1, y1, c);
+}
+
 // ==========================================
 // Database Operations
 // ==========================================
@@ -130,7 +138,7 @@ void add_shape() {
     int type_input;
 
     printf("\nSelect Shape Type:\n");
-    printf("0: Line, 1: Rectangle, 2: Circle (Math Pending), 3: Triangle (Math Pending)\nChoice: ");
+    printf("0: Line, 1: Rectangle, 2: Circle (Math Pending), 3: Triangle\nChoice: ");
     if (scanf("%d", &type_input) != 1 || type_input < 0 || type_input > 3) {
         while(getchar() != '\n');
         printf("Invalid shape type.\n");
@@ -259,8 +267,10 @@ void display_canvas() {
             case RECTANGLE:
                 render_rectangle(s.data.rect.x, s.data.rect.y, s.data.rect.w, s.data.rect.h, s.draw_char);
                 break;
-            case CIRCLE:
             case TRIANGLE:
+                render_triangle(s.data.triangle.x1, s.data.triangle.y1, s.data.triangle.x2, s.data.triangle.y2, s.data.triangle.x3, s.data.triangle.y3, s.draw_char);
+                break;
+            case CIRCLE:
                 // Pending logic for next version
                 break;
         }
