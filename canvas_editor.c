@@ -181,18 +181,62 @@ void add_shape() {
         case LINE:
             printf("Enter X1 Y1 X2 Y2: ");
             scanf("%d %d %d %d", &s.data.line.x1, &s.data.line.y1, &s.data.line.x2, &s.data.line.y2);
+            // Validate: all coordinates must be within canvas bounds
+            if (s.data.line.x1 < 0 || s.data.line.x1 >= CANVAS_WIDTH ||
+                s.data.line.y1 < 0 || s.data.line.y1 >= CANVAS_HEIGHT ||
+                s.data.line.x2 < 0 || s.data.line.x2 >= CANVAS_WIDTH ||
+                s.data.line.y2 < 0 || s.data.line.y2 >= CANVAS_HEIGHT) {
+                printf("Error: Coordinates out of bounds. X must be 0-%d, Y must be 0-%d.\n", CANVAS_WIDTH - 1, CANVAS_HEIGHT - 1);
+                return;
+            }
             break;
+
         case RECTANGLE:
             printf("Enter Top-Left X, Y, Width, Height: ");
             scanf("%d %d %d %d", &s.data.rect.x, &s.data.rect.y, &s.data.rect.w, &s.data.rect.h);
+            // Validate: width and height must be positive, and rectangle must fit on canvas
+            if (s.data.rect.w <= 0 || s.data.rect.h <= 0) {
+                printf("Error: Width and Height must be greater than 0.\n");
+                return;
+            }
+            if (s.data.rect.x < 0 || s.data.rect.y < 0 ||
+                s.data.rect.x + s.data.rect.w > CANVAS_WIDTH ||
+                s.data.rect.y + s.data.rect.h > CANVAS_HEIGHT) {
+                printf("Error: Rectangle out of bounds. Canvas is %dx%d.\n", CANVAS_WIDTH, CANVAS_HEIGHT);
+                return;
+            }
             break;
+
         case CIRCLE:
             printf("Enter Center X, Y, and Radius: ");
             scanf("%d %d %d", &s.data.circle.cx, &s.data.circle.cy, &s.data.circle.r);
+            // Validate: radius must be positive, center must be on canvas
+            if (s.data.circle.r <= 0) {
+                printf("Error: Radius must be greater than 0.\n");
+                return;
+            }
+            if (s.data.circle.cx < 0 || s.data.circle.cx >= CANVAS_WIDTH ||
+                s.data.circle.cy < 0 || s.data.circle.cy >= CANVAS_HEIGHT) {
+                printf("Error: Center out of bounds. X must be 0-%d, Y must be 0-%d.\n", CANVAS_WIDTH - 1, CANVAS_HEIGHT - 1);
+                return;
+            }
             break;
+
         case TRIANGLE:
             printf("Enter X1 Y1 X2 Y2 X3 Y3: ");
-            scanf("%d %d %d %d %d %d", &s.data.triangle.x1, &s.data.triangle.y1, &s.data.triangle.x2, &s.data.triangle.y2, &s.data.triangle.x3, &s.data.triangle.y3);
+            scanf("%d %d %d %d %d %d", &s.data.triangle.x1, &s.data.triangle.y1,
+                  &s.data.triangle.x2, &s.data.triangle.y2,
+                  &s.data.triangle.x3, &s.data.triangle.y3);
+            // Validate: all three vertices must be within canvas bounds
+            if (s.data.triangle.x1 < 0 || s.data.triangle.x1 >= CANVAS_WIDTH ||
+                s.data.triangle.y1 < 0 || s.data.triangle.y1 >= CANVAS_HEIGHT ||
+                s.data.triangle.x2 < 0 || s.data.triangle.x2 >= CANVAS_WIDTH ||
+                s.data.triangle.y2 < 0 || s.data.triangle.y2 >= CANVAS_HEIGHT ||
+                s.data.triangle.x3 < 0 || s.data.triangle.x3 >= CANVAS_WIDTH ||
+                s.data.triangle.y3 < 0 || s.data.triangle.y3 >= CANVAS_HEIGHT) {
+                printf("Error: Coordinates out of bounds. X must be 0-%d, Y must be 0-%d.\n", CANVAS_WIDTH - 1, CANVAS_HEIGHT - 1);
+                return;
+            }
             break;
     }
 
@@ -210,6 +254,12 @@ void delete_shape() {
     printf("Enter ID to delete: ");
     if (scanf("%d", &target_id) != 1) {
         while(getchar() != '\n');
+        return;
+    }
+
+    // Validate: ID must be positive
+    if (target_id <= 0) {
+        printf("Error: Invalid ID. ID must be a positive number.\n");
         return;
     }
 
@@ -245,6 +295,12 @@ void modify_shape() {
         return;
     }
 
+    // Validate: ID must be positive
+    if (target_id <= 0) {
+        printf("Error: Invalid ID. ID must be a positive number.\n");
+        return;
+    }
+
     int found_index = -1;
     for (int i = 0; i < shape_count; i++) {
         if (shape_db[i].id == target_id) {
@@ -262,18 +318,62 @@ void modify_shape() {
             case LINE:
                 printf("Enter new X1 Y1 X2 Y2: ");
                 scanf("%d %d %d %d", &s->data.line.x1, &s->data.line.y1, &s->data.line.x2, &s->data.line.y2);
+                // Validate: all coordinates must be within canvas bounds
+                if (s->data.line.x1 < 0 || s->data.line.x1 >= CANVAS_WIDTH ||
+                    s->data.line.y1 < 0 || s->data.line.y1 >= CANVAS_HEIGHT ||
+                    s->data.line.x2 < 0 || s->data.line.x2 >= CANVAS_WIDTH ||
+                    s->data.line.y2 < 0 || s->data.line.y2 >= CANVAS_HEIGHT) {
+                    printf("Error: Coordinates out of bounds. Changes not saved.\n");
+                    return;
+                }
                 break;
+
             case RECTANGLE:
                 printf("Enter new Top-Left X, Y, Width, Height: ");
                 scanf("%d %d %d %d", &s->data.rect.x, &s->data.rect.y, &s->data.rect.w, &s->data.rect.h);
+                // Validate: width and height must be positive, and rectangle must fit on canvas
+                if (s->data.rect.w <= 0 || s->data.rect.h <= 0) {
+                    printf("Error: Width and Height must be greater than 0. Changes not saved.\n");
+                    return;
+                }
+                if (s->data.rect.x < 0 || s->data.rect.y < 0 ||
+                    s->data.rect.x + s->data.rect.w > CANVAS_WIDTH ||
+                    s->data.rect.y + s->data.rect.h > CANVAS_HEIGHT) {
+                    printf("Error: Rectangle out of bounds. Changes not saved.\n");
+                    return;
+                }
                 break;
+
             case CIRCLE:
                 printf("Enter new Center X, Y, and Radius: ");
                 scanf("%d %d %d", &s->data.circle.cx, &s->data.circle.cy, &s->data.circle.r);
+                // Validate: radius must be positive, center must be on canvas
+                if (s->data.circle.r <= 0) {
+                    printf("Error: Radius must be greater than 0. Changes not saved.\n");
+                    return;
+                }
+                if (s->data.circle.cx < 0 || s->data.circle.cx >= CANVAS_WIDTH ||
+                    s->data.circle.cy < 0 || s->data.circle.cy >= CANVAS_HEIGHT) {
+                    printf("Error: Center out of bounds. Changes not saved.\n");
+                    return;
+                }
                 break;
+
             case TRIANGLE:
                 printf("Enter new X1 Y1 X2 Y2 X3 Y3: ");
-                scanf("%d %d %d %d %d %d", &s->data.triangle.x1, &s->data.triangle.y1, &s->data.triangle.x2, &s->data.triangle.y2, &s->data.triangle.x3, &s->data.triangle.y3);
+                scanf("%d %d %d %d %d %d", &s->data.triangle.x1, &s->data.triangle.y1,
+                      &s->data.triangle.x2, &s->data.triangle.y2,
+                      &s->data.triangle.x3, &s->data.triangle.y3);
+                // Validate: all three vertices must be within canvas bounds
+                if (s->data.triangle.x1 < 0 || s->data.triangle.x1 >= CANVAS_WIDTH ||
+                    s->data.triangle.y1 < 0 || s->data.triangle.y1 >= CANVAS_HEIGHT ||
+                    s->data.triangle.x2 < 0 || s->data.triangle.x2 >= CANVAS_WIDTH ||
+                    s->data.triangle.y2 < 0 || s->data.triangle.y2 >= CANVAS_HEIGHT ||
+                    s->data.triangle.x3 < 0 || s->data.triangle.x3 >= CANVAS_WIDTH ||
+                    s->data.triangle.y3 < 0 || s->data.triangle.y3 >= CANVAS_HEIGHT) {
+                    printf("Error: Coordinates out of bounds. Changes not saved.\n");
+                    return;
+                }
                 break;
         }
         printf("Shape ID %d updated.\n", s->id);
