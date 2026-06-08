@@ -35,6 +35,8 @@ void render_line(int x1, int y1, int x2, int y2, char c);
 void render_rectangle(int x, int y, int w, int h, char c);
 void render_triangle(int x1, int y1, int x2, int y2, int x3, int y3, char c);
 void render_circle(int cx, int cy, int r, char c);
+void save_database();
+void load_database();
 
 int main() {
     int choice;
@@ -47,6 +49,8 @@ int main() {
         printf("2. Delete Shape\n");
         printf("3. Modify Shape\n");
         printf("4. Display Canvas\n");
+        printf("5. Save Database\n");
+        printf("6. Load Database\n");
         printf("0. Exit\n");
         printf("Choose an option: ");
         
@@ -61,6 +65,8 @@ int main() {
             case 2: delete_shape(); break;
             case 3: modify_shape(); break;
             case 4: display_canvas(); break;
+            case 5: save_database(); break;
+            case 6: load_database(); break;
             case 0: 
                 printf("Shutting down...\n");
                 exit(0);
@@ -181,7 +187,6 @@ void add_shape() {
         case LINE:
             printf("Enter X1 Y1 X2 Y2: ");
             scanf("%d %d %d %d", &s.data.line.x1, &s.data.line.y1, &s.data.line.x2, &s.data.line.y2);
-            // Validate: all coordinates must be within canvas bounds
             if (s.data.line.x1 < 0 || s.data.line.x1 >= CANVAS_WIDTH ||
                 s.data.line.y1 < 0 || s.data.line.y1 >= CANVAS_HEIGHT ||
                 s.data.line.x2 < 0 || s.data.line.x2 >= CANVAS_WIDTH ||
@@ -194,7 +199,6 @@ void add_shape() {
         case RECTANGLE:
             printf("Enter Top-Left X, Y, Width, Height: ");
             scanf("%d %d %d %d", &s.data.rect.x, &s.data.rect.y, &s.data.rect.w, &s.data.rect.h);
-            // Validate: width and height must be positive, and rectangle must fit on canvas
             if (s.data.rect.w <= 0 || s.data.rect.h <= 0) {
                 printf("Error: Width and Height must be greater than 0.\n");
                 return;
@@ -210,7 +214,6 @@ void add_shape() {
         case CIRCLE:
             printf("Enter Center X, Y, and Radius: ");
             scanf("%d %d %d", &s.data.circle.cx, &s.data.circle.cy, &s.data.circle.r);
-            // Validate: radius must be positive, center must be on canvas
             if (s.data.circle.r <= 0) {
                 printf("Error: Radius must be greater than 0.\n");
                 return;
@@ -227,7 +230,6 @@ void add_shape() {
             scanf("%d %d %d %d %d %d", &s.data.triangle.x1, &s.data.triangle.y1,
                   &s.data.triangle.x2, &s.data.triangle.y2,
                   &s.data.triangle.x3, &s.data.triangle.y3);
-            // Validate: all three vertices must be within canvas bounds
             if (s.data.triangle.x1 < 0 || s.data.triangle.x1 >= CANVAS_WIDTH ||
                 s.data.triangle.y1 < 0 || s.data.triangle.y1 >= CANVAS_HEIGHT ||
                 s.data.triangle.x2 < 0 || s.data.triangle.x2 >= CANVAS_WIDTH ||
@@ -257,7 +259,6 @@ void delete_shape() {
         return;
     }
 
-    // Validate: ID must be positive
     if (target_id <= 0) {
         printf("Error: Invalid ID. ID must be a positive number.\n");
         return;
@@ -295,7 +296,6 @@ void modify_shape() {
         return;
     }
 
-    // Validate: ID must be positive
     if (target_id <= 0) {
         printf("Error: Invalid ID. ID must be a positive number.\n");
         return;
@@ -318,7 +318,6 @@ void modify_shape() {
             case LINE:
                 printf("Enter new X1 Y1 X2 Y2: ");
                 scanf("%d %d %d %d", &s->data.line.x1, &s->data.line.y1, &s->data.line.x2, &s->data.line.y2);
-                // Validate: all coordinates must be within canvas bounds
                 if (s->data.line.x1 < 0 || s->data.line.x1 >= CANVAS_WIDTH ||
                     s->data.line.y1 < 0 || s->data.line.y1 >= CANVAS_HEIGHT ||
                     s->data.line.x2 < 0 || s->data.line.x2 >= CANVAS_WIDTH ||
@@ -331,7 +330,6 @@ void modify_shape() {
             case RECTANGLE:
                 printf("Enter new Top-Left X, Y, Width, Height: ");
                 scanf("%d %d %d %d", &s->data.rect.x, &s->data.rect.y, &s->data.rect.w, &s->data.rect.h);
-                // Validate: width and height must be positive, and rectangle must fit on canvas
                 if (s->data.rect.w <= 0 || s->data.rect.h <= 0) {
                     printf("Error: Width and Height must be greater than 0. Changes not saved.\n");
                     return;
@@ -347,7 +345,6 @@ void modify_shape() {
             case CIRCLE:
                 printf("Enter new Center X, Y, and Radius: ");
                 scanf("%d %d %d", &s->data.circle.cx, &s->data.circle.cy, &s->data.circle.r);
-                // Validate: radius must be positive, center must be on canvas
                 if (s->data.circle.r <= 0) {
                     printf("Error: Radius must be greater than 0. Changes not saved.\n");
                     return;
@@ -364,7 +361,6 @@ void modify_shape() {
                 scanf("%d %d %d %d %d %d", &s->data.triangle.x1, &s->data.triangle.y1,
                       &s->data.triangle.x2, &s->data.triangle.y2,
                       &s->data.triangle.x3, &s->data.triangle.y3);
-                // Validate: all three vertices must be within canvas bounds
                 if (s->data.triangle.x1 < 0 || s->data.triangle.x1 >= CANVAS_WIDTH ||
                     s->data.triangle.y1 < 0 || s->data.triangle.y1 >= CANVAS_HEIGHT ||
                     s->data.triangle.x2 < 0 || s->data.triangle.x2 >= CANVAS_WIDTH ||
@@ -413,4 +409,57 @@ void display_canvas() {
         putchar('\n');
     }
     printf("-------------------------------------------------\n");
+}
+
+// ==========================================
+// File I/O Operations
+// ==========================================
+
+void save_database() {
+    FILE *fp = fopen("engine_save.dat", "wb");
+    if (fp == NULL) {
+        printf("Error: Could not open file to save data.\n");
+        return;
+    }
+
+    // Save the global state tracking variables
+    fwrite(&shape_count, sizeof(int), 1, fp);
+    fwrite(&next_id, sizeof(int), 1, fp);
+
+    // Save the actual memory block containing the shapes
+    if (shape_count > 0) {
+        fwrite(shape_db, sizeof(Shape), shape_count, fp);
+    }
+
+    fclose(fp);
+    printf("Successfully saved %d shapes to engine_save.dat.\n", shape_count);
+}
+
+void load_database() {
+    FILE *fp = fopen("engine_save.dat", "rb");
+    if (fp == NULL) {
+        printf("Error: No saved data found (engine_save.dat is missing).\n");
+        return;
+    }
+
+    // Load the global state
+    fread(&shape_count, sizeof(int), 1, fp);
+    fread(&next_id, sizeof(int), 1, fp);
+
+    // Prevent buffer overflow if a corrupted file returns a massive shape count
+    if (shape_count > MAX_SHAPES) {
+        printf("Error: Save file corrupted or exceeds MAX_SHAPES. Loading aborted.\n");
+        shape_count = 0;
+        next_id = 1;
+        fclose(fp);
+        return;
+    }
+
+    // Load the shape array
+    if (shape_count > 0) {
+        fread(shape_db, sizeof(Shape), shape_count, fp);
+    }
+
+    fclose(fp);
+    printf("Successfully loaded %d shapes from engine_save.dat. Resuming work...\n", shape_count);
 }
