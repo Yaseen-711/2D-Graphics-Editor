@@ -64,7 +64,6 @@ int main() {
             continue;
         }
         while(getchar() != '\n'); // Flush buffer to ensure smooth pauses later
-
         switch (choice) {
             case 1: add_shape(); break;
             case 2: delete_shape(); break;
@@ -81,7 +80,6 @@ int main() {
     }
     return 0;
 }
-
 // ==========================================
 // Rendering Engine Logic
 // ==========================================
@@ -89,7 +87,7 @@ int main() {
 void init_canvas() {
     for (int i = 0; i < CANVAS_HEIGHT; i++) {
         for (int j = 0; j < CANVAS_WIDTH; j++) {
-            canvas[i][j] = '_'; // Strictly set to underscore per assignment rubric
+            canvas[i][j] = '_'; 
         }
     }
 }
@@ -139,13 +137,10 @@ void render_triangle(int x1, int y1, int x2, int y2, int x3, int y3, char c) {
 void render_circle(int cx, int cy, int r, char c) {
     int rx = (int)(r * 1.5); // Stretch horizontal axis slightly to counteract tall terminal fonts
     int ry = r;
-    
     int x = 0;
-    int y = ry;
-    
+    int y = ry; 
     int rxSq = rx * rx;
-    int rySq = ry * ry;
-    
+    int rySq = ry * ry; 
     int d1 = rySq - (rxSq * ry) + (0.25f * rxSq);
     int dx = 2 * rySq * x;
     int dy = 2 * rxSq * y;
@@ -230,7 +225,6 @@ void add_shape() {
         printf("\nError: Shape database is full.\n");
         return;
     }
-
     Shape s;
     s.id = next_id++;
     int type_input;
@@ -249,7 +243,6 @@ void add_shape() {
         return;
     }
     while(getchar() != '\n'); // flush buffer
-
     if (type_input == 4) {
         printf("Action cancelled. Returning to menu...\n");
         return;
@@ -260,11 +253,10 @@ void add_shape() {
     }
     
     s.type = (ShapeType)type_input;
-
-    // Automatically assign asterisk per assignment requirements
+    // Automatically assign asterisk
     s.draw_char = '*';
 
-    printf("\n"); // Visual breathing room
+    printf("\n"); 
     switch (s.type) {
         case LINE:
             printf("Enter Coordinates (X1 Y1 X2 Y2): ");
@@ -323,8 +315,7 @@ void add_shape() {
             }
             break;
     }
-    while(getchar() != '\n'); // flush buffer
-
+    while(getchar() != '\n'); 
     shape_db[shape_count++] = s;
     printf("\n[+] Shape added successfully. Assigned ID: %d\n", s.id);
 }
@@ -344,7 +335,7 @@ void delete_shape() {
         printf("Error: Invalid input.\n");
         return;
     }
-    while(getchar() != '\n'); // flush buffer
+    while(getchar() != '\n'); 
 
     if (target_id == 0) {
         printf("Action cancelled. Returning to menu...\n");
@@ -380,7 +371,6 @@ void modify_shape() {
         printf("\nDatabase is empty. Nothing to modify.\n");
         return;
     }
-
     show_shape_list();
 
     int target_id;
@@ -390,13 +380,12 @@ void modify_shape() {
         printf("Error: Invalid input.\n");
         return;
     }
-    while(getchar() != '\n'); // flush buffer
+    while(getchar() != '\n'); 
 
     if (target_id == 0) {
         printf("Action cancelled. Returning to menu...\n");
         return;
     }
-
     if (target_id < 0) {
         printf("Error: Invalid ID. ID must be a positive number.\n");
         return;
@@ -413,11 +402,8 @@ void modify_shape() {
     if (found_index != -1) {
         Shape *s = &shape_db[found_index];
         printf("\nModifying Shape ID %d (Type: %d).\n", s->id, s->type);
-        
-        // Force drawing character to remain asterisk
         s->draw_char = '*';
-
-        printf("\n"); // Visual breathing room
+        printf("\n"); 
         switch (s->type) {
             case LINE:
                 printf("Enter new Coordinates (X1 Y1 X2 Y2): ");
@@ -476,7 +462,7 @@ void modify_shape() {
                 }
                 break;
         }
-        while(getchar() != '\n'); // flush buffer
+        while(getchar() != '\n'); 
         printf("\n[*] Shape ID %d updated.\n", s->id);
     } else {
         printf("\nError: Shape ID %d not found.\n", target_id);
@@ -551,7 +537,6 @@ void save_database() {
         printf("\nError: Could not open file to save data.\n");
         return;
     }
-
     // Save the global state tracking variables
     fwrite(&shape_count, sizeof(int), 1, fp);
     fwrite(&next_id, sizeof(int), 1, fp);
@@ -560,7 +545,6 @@ void save_database() {
     if (shape_count > 0) {
         fwrite(shape_db, sizeof(Shape), shape_count, fp);
     }
-
     fclose(fp);
     printf("\nSuccessfully saved %d shapes to engine_save.dat.\n", shape_count);
 }
@@ -571,11 +555,9 @@ void load_database() {
         printf("\nError: No saved data found (engine_save.dat is missing).\n");
         return;
     }
-
     // Load the global state
     fread(&shape_count, sizeof(int), 1, fp);
     fread(&next_id, sizeof(int), 1, fp);
-
     // Prevent buffer overflow if a corrupted file returns a massive shape count
     if (shape_count > MAX_SHAPES) {
         printf("\nError: Save file corrupted or exceeds MAX_SHAPES. Loading aborted.\n");
@@ -589,7 +571,6 @@ void load_database() {
     if (shape_count > 0) {
         fread(shape_db, sizeof(Shape), shape_count, fp);
     }
-
     fclose(fp);
     printf("\nSuccessfully loaded %d shapes from engine_save.dat. Resuming work...\n", shape_count);
 }
