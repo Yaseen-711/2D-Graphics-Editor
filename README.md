@@ -14,7 +14,7 @@ Create, edit, render, and persist geometric shapes on a text-based canvas using 
 
 ##  Overview
 
-CLI Paint Engine is a menu-driven 2D graphics editor built entirely in C. It simulates a drawing environment using a 2D character array as a virtual canvas, allowing users to create and manage graphical objects directly from the terminal.
+2D Graphics Editor Canvas is a menu-driven 2D graphics editor built entirely in C. It simulates a drawing environment using a 2D character array as a virtual canvas, allowing users to create and manage graphical objects directly from the terminal.
 
 The application supports shape creation, modification, deletion, rendering, and persistent storage through a binary save system. It demonstrates core concepts of computer graphics, data structures, file handling, and algorithm implementation.
 
@@ -161,7 +161,7 @@ canvas_editor.exe
 
 ### Step 1 — Launch Program
 
-Run the canva_editor.c .
+Run the canva_editor .
 
 The Main Menu will appear.
 
@@ -316,3 +316,11 @@ R25EH014
 B.Tech AI & Data Science - A
 
 ---
+## Notes
+
+This project was developed as part of a programming assignment focused on implementing a menu-driven 2D Graphics Editor in C.
+Subject : ACP
+
+The objective was to design and implement a graphics editor using a 2D character array as a drawing canvas, supporting the creation, modification, deletion, storage, and rendering of graphical objects such as lines, rectangles, circles, and triangles.
+
+The result is a functional command-line graphics engine that extends beyond the minimum requirements and demonstrates practical applications of data structures, file handling, and computer graphics concepts in C.
