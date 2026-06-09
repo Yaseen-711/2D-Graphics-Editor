@@ -1,4 +1,4 @@
-# 🎨 CLI Paint Engine
+#  2D Graphics Editor Canvas
 
 <div align="center">
 
@@ -12,7 +12,7 @@ Create, edit, render, and persist geometric shapes on a text-based canvas using 
 
 ---
 
-## 📖 Overview
+##  Overview
 
 CLI Paint Engine is a menu-driven 2D graphics editor built entirely in C. It simulates a drawing environment using a 2D character array as a virtual canvas, allowing users to create and manage graphical objects directly from the terminal.
 
@@ -20,9 +20,9 @@ The application supports shape creation, modification, deletion, rendering, and 
 
 ---
 
-## ✨ Features
+##  Features
 
-### 🎯 Shape Management
+###  Shape Management
 
 - Add new graphical objects
 - Modify existing objects
@@ -30,14 +30,14 @@ The application supports shape creation, modification, deletion, rendering, and 
 - Automatic unique ID assignment
 - Shape database management
 
-### 📐 Supported Shapes
+###  Supported Shapes
 
 - Line
 - Rectangle
 - Circle
 - Triangle
 
-### 🖥️ Canvas Rendering
+###  Canvas Rendering
 
 - Fixed-size 50 × 25 drawing canvas
 - Coordinate ruler system
@@ -45,7 +45,7 @@ The application supports shape creation, modification, deletion, rendering, and 
 - Layered shape rendering
 - Real-time display generation
 
-### 💾 Persistence System
+###  Persistence System
 
 - Save work to disk
 - Load previous sessions
@@ -53,7 +53,7 @@ The application supports shape creation, modification, deletion, rendering, and 
 - Shape database restoration
 - Save file integrity protection
 
-### 🛡️ Input Validation
+###  Input Validation
 
 - Coordinate boundary checking
 - Shape dimension validation
@@ -62,7 +62,7 @@ The application supports shape creation, modification, deletion, rendering, and 
 
 ---
 
-# 📸 Application Preview
+#  Application Preview
 
 ## Main Menu
 
@@ -80,7 +80,7 @@ Example output containing multiple graphical objects rendered on the terminal ca
 
 ---
 
-## ⚙️ Graphics Algorithms Used
+##  Graphics Algorithms Used
 
 ### Bresenham's Line Algorithm
 
@@ -100,7 +100,7 @@ Uses a modified midpoint ellipse approach to compensate for terminal character d
 
 ---
 
-## 🗂️ Project Structure
+##  Project Structure
 
 ```text
 CLI-Paint-Engine
@@ -119,7 +119,7 @@ CLI-Paint-Engine
 
 ---
 
-## 📋 Requirements
+##  Requirements
 
 ### Compiler
 
@@ -139,7 +139,7 @@ Examples:
 
 ---
 
-## 🚀 Building and Running
+## Building and Running
 
 ### Linux / macOS
 
@@ -157,11 +157,11 @@ canvas_editor.exe
 
 ---
 
-## 🎮 How To Use
+##  How To Use
 
 ### Step 1 — Launch Program
 
-Run the executable.
+Run the canva_editor.c .
 
 The Main Menu will appear.
 
@@ -282,7 +282,7 @@ to restore previously saved shapes.
 
 ---
 
-## 📊 Canvas Specifications
+##  Canvas Specifications
 
 | Property | Value |
 |-----------|-----------|
@@ -295,7 +295,7 @@ to restore previously saved shapes.
 
 ---
 
-## 🏗️ Technical Highlights
+##  Technical Highlights
 
 - ANSI C implementation
 - Struct + Union based object storage
@@ -308,27 +308,11 @@ to restore previously saved shapes.
 
 ---
 
-## 🔮 Future Improvements
 
-Potential future additions include:
-
-- Filled shapes
-- Polygon support
-- ANSI color rendering
-- Undo / Redo functionality
-- Shape movement tools
-- Layer management
-- Dynamic canvas resizing
-- PNG export support
-- ncurses-based GUI
-- Shape transformations (rotation, scaling)
-
----
-
-## 👨‍💻 Author
+##  Author
 
 **Ali Mohammed Yaseen**  
 R25EH014  
-B.Tech AI & Data Science
+B.Tech AI & Data Science - A
 
 ---
