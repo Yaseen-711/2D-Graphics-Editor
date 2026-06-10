@@ -11,7 +11,19 @@ Create, edit, render, and persist geometric shapes on a text-based canvas using 
 </div>
 
 ---
+## Project Documentation
 
+The complete prompt sequence used to develop this project is available in:
+
+- [PROMPT.MD](./PROMPT.MD) — Comprehensive step-by-step prompt chain containing all development phases, implementation requirements, and validation checklists.
+
+A condensed version designed for quicker recreation is available in:
+
+- [PROMPT.txt](./PROMPT.txt) — Simplified single-prompt specification covering the core architecture and functionality.
+
+These files document the development workflow and can be used to reproduce the project using an AI coding assistant.
+
+---
 ##  Overview
 
 2D Graphics Editor Canvas is a menu-driven 2D graphics editor built entirely in C. It simulates a drawing environment using a 2D character array as a virtual canvas, allowing users to create and manage graphical objects directly from the terminal.
