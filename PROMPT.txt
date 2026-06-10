@@ -1,0 +1,132 @@
+Build a complete menu-driven 2D Graphics Editor in ANSI C using only the standard library and a 50x25 character-array canvas.
+
+Project Requirements:
+
+* Define constants:
+
+  * MAX_SHAPES = 100
+  * CANVAS_WIDTH = 50
+  * CANVAS_HEIGHT = 25
+
+* Create:
+
+  * enum ShapeType { LINE, RECTANGLE, CIRCLE, TRIANGLE }
+  * Shape struct containing:
+
+    * ShapeType type
+    * int id
+    * char draw_char
+    * union data with:
+
+      * Line: x1,y1,x2,y2
+      * Rectangle: x,y,w,h
+      * Circle: cx,cy,r
+      * Triangle: x1,y1,x2,y2,x3,y3
+
+* Global variables:
+
+  * shape_db[MAX_SHAPES]
+  * shape_count
+  * next_id
+  * canvas[CANVAS_HEIGHT][CANVAS_WIDTH]
+
+Implement the following functions:
+
+1. init_canvas()
+
+   * Fill the entire canvas with '_'.
+
+2. plot(x,y,c)
+
+   * Perform all bounds checking here.
+   * Use canvas[y][x].
+   * Ignore out-of-bounds coordinates safely.
+
+3. render_line()
+
+   * Use Bresenham's Line Algorithm.
+   * Support all line directions.
+   * Plot through plot() only.
+
+4. render_rectangle()
+
+   * Draw hollow rectangles using four edges.
+
+5. render_triangle()
+
+   * Draw triangles using three render_line() calls.
+
+6. render_circle()
+
+   * Use a midpoint-circle style algorithm.
+   * Apply terminal aspect-ratio correction using rx=(int)(r*1.5), ry=r.
+   * Plot symmetric points.
+
+7. add_shape()
+
+   * Create new shapes.
+   * Validate coordinates and dimensions.
+   * Prevent exceeding MAX_SHAPES.
+   * Assign unique IDs.
+   * Default draw character '*'.
+
+8. show_shape_list()
+
+   * Display all stored shapes with IDs and coordinates.
+
+9. delete_shape()
+
+   * Delete by ID.
+   * Shift remaining elements left.
+   * Decrement shape_count.
+
+10. modify_shape()
+
+    * Modify existing shapes by ID.
+    * Reuse the same validation logic as creation.
+
+11. display_canvas()
+
+    * Clear and rebuild the canvas from all stored shapes.
+    * Render every shape according to its type.
+    * Display a 50x25 canvas with coordinate rulers and borders.
+
+12. save_database()
+
+    * Save shape_count, next_id, and shape database to "engine_save.dat" using binary fwrite().
+
+13. load_database()
+
+    * Load shape_count, next_id, and shape database using fread().
+    * Reject files where shape_count exceeds MAX_SHAPES.
+
+Main Menu:
+
+Create an infinite menu loop with options:
+
+1. Add Shape
+2. Delete Shape
+3. Modify Shape
+4. Display Canvas
+5. Show Shape List
+6. Save Database
+7. Load Database
+8. Exit
+
+Critical Constraints:
+
+* Always flush input after every scanf():
+  while(getchar() != '\n');
+
+* Always use canvas[y][x].
+
+* Never perform bounds checking inside rendering algorithms.
+
+* Bounds checking must exist only inside plot().
+
+* Prevent buffer overflows and invalid file loads.
+
+* Compile cleanly with:
+  gcc -Wall -Wextra
+
+Output a complete, modular, well-structured C program implementing all features above.
